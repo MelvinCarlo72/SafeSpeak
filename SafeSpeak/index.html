@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SafeSpeak | AUF CCS</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+    <!-- TensorFlow.js Toxicity Model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
+</head>
+
+<body>
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <div class="brand-area">
+
+                <div class="auf-logo">
+                    <img
+                        src="logo.png"
+                        alt="Angeles University Foundation"
+                        onerror="this.style.display='none'; document.getElementById('aufFallback').style.display='block';"
+                    >
+
+                    <span id="aufFallback">AUF</span>
+                </div>
+
+                <div class="brand-divider"></div>
+
+                <div class="brand-text">
+                    <h1>SafeSpeak</h1>
+                    <p>Student Message Safety Checker</p>
+                </div>
+
+            </div>
+
+
+            <div class="institution">
+
+                <span>ANGELES UNIVERSITY FOUNDATION</span>
+
+                <strong>CCS</strong>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="page">
+
+        <!-- PAGE INTRO -->
+
+        <section class="page-intro">
+
+            <div>
+
+                <span class="section-label">
+                    ONLINE COMMUNICATION
+                </span>
+
+                <h2>
+                    Check your message before submitting.
+                </h2>
+
+                <p>
+                    SafeSpeak analyzes written messages for potentially
+                    harmful language and provides an AI-assisted assessment.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             MESSAGE WORKSPACE
+        ====================================== -->
+
+        <section class="workspace">
+
+            <div class="workspace-header">
+
+                <div>
+                    <h3>Message</h3>
+
+                    <p>
+                        Enter the message you would like to analyze.
+                    </p>
+                </div>
+
+                <span id="charCount">
+                    0 / 500
+                </span>
+
+            </div>
+
+
+            <textarea
+                id="message"
+                maxlength="500"
+                placeholder="Write or paste your message here..."
+            ></textarea>
+
+
+            <!-- EXAMPLE CONTROLS -->
+
+            <div class="controls">
+
+                <div class="examples">
+
+                    <span class="examples-label">
+                        Try an example:
+                    </span>
+
+                    <button onclick="useExample('positive')">
+                        Positive
+                    </button>
+
+                    <button onclick="useExample('neutral')">
+                        Neutral
+                    </button>
+
+                    <button onclick="useExample('toxic')">
+                        Toxic
+                    </button>
+
+                    <button onclick="clearMessage()">
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <button
+                    id="analyzeBtn"
+                    onclick="analyzeMessage()"
+                    disabled
+                >
+                    Analyze Message
+                </button>
+
+            </div>
+
+
+            <div class="model-status">
+
+                <span class="status-dot"></span>
+
+                <span id="modelStatus">
+                    Loading AI model...
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             RESULTS
+        ====================================== -->
+
+        <section
+            id="results"
+            class="analysis hidden"
+        >
+
+            <div class="analysis-header">
+
+                <div>
+
+                    <span class="section-label">
+                        ANALYSIS
+                    </span>
+
+                    <h3>
+                        Message Assessment
+                    </h3>
+
+                </div>
+
+
+                <div
+                    id="statusBadge"
+                    class="status-badge"
+                >
+                    Waiting for analysis
+                </div>
+
+            </div>
+
+
+
+            <!-- OVERALL SCORE -->
+
+            <div class="overall-result">
+
+                <div class="overall-heading">
+
+                    <span>
+                        Overall toxicity probability
+                    </span>
+
+                    <strong id="toxicityScore">
+                        0.0%
+                    </strong>
+
+                </div>
+
+
+                <div class="main-progress">
+
+                    <div id="toxicityBar"></div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CATEGORY RESULTS -->
+
+            <div class="category-section">
+
+                <div class="category-title">
+
+                    <span>Category</span>
+
+                    <span>Probability</span>
+
+                </div>
+
+
+                <div id="categories"></div>
+
+            </div>
+
+
+
+            <!-- REVIEW MESSAGE -->
+
+            <div class="review-message">
+
+                <div class="review-title">
+                    Review recommendation
+                </div>
+
+                <p>
+                    AI predictions are only an indication of potentially
+                    harmful language. Human review should be used before
+                    taking action on a message.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             ABOUT
+        ====================================== -->
+
+        <section class="about-section">
+
+            <span class="section-label">
+                ABOUT THE PROJECT
+            </span>
+
+            <h3>
+                AI-assisted communication safety
+            </h3>
+
+            <p>
+                SafeSpeak is a prototype demonstrating how a pre-trained
+                TensorFlow.js text toxicity model can assist with online
+                communication moderation in an AUF environment.
+            </p>
+
+            <p>
+                The system is intended to assist human moderators and
+                should not be used as the sole basis for blocking or
+                penalizing users.
+            </p>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+        <div>
+            SafeSpeak Prototype
+        </div>
+
+        <div>
+            Angeles University Foundation · College of Computer Studies
+        </div>
+
+    </footer>
+
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script>
+
+        let model = null;
+
+        const threshold = 0.5;
+
+        const messageInput =
+            document.getElementById("message");
+
+        const analyzeBtn =
+            document.getElementById("analyzeBtn");
+
+        const charCount =
+            document.getElementById("charCount");
+
+        const modelStatus =
+            document.getElementById("modelStatus");
+
+
+        /* =====================================
+           LOAD MODEL
+        ====================================== */
+
+        async function loadModel() {
+
+            try {
+
+                modelStatus.textContent =
+                    "Loading AI model...";
+
+                model =
+                    await toxicity.load(threshold);
+
+                analyzeBtn.disabled = false;
+
+                modelStatus.textContent =
+                    "AI model ready";
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                modelStatus.textContent =
+                    "Unable to load AI model";
+
+            }
+
+        }
+
+
+
+        /* =====================================
+           CHARACTER COUNTER
+        ====================================== */
+
+        messageInput.addEventListener(
+            "input",
+            updateCharacterCount
+        );
+
+
+        function updateCharacterCount() {
+
+            const length =
+                messageInput.value.length;
+
+            charCount.textContent =
+                `${length} / 500`;
+
+        }
+
+
+
+        /* =====================================
+           ANALYZE MESSAGE
+        ====================================== */
+
+        async function analyzeMessage() {
+
+            const message =
+                messageInput.value.trim();
+
+
+            if (!message) {
+
+                alert(
+                    "Please enter a message first."
+                );
+
+                return;
+
+            }
+
+
+            if (!model) {
+
+                alert(
+                    "The AI model is still loading."
+                );
+
+                return;
+
+            }
+
+
+            analyzeBtn.disabled = true;
+
+            analyzeBtn.textContent =
+                "Analyzing...";
+
+
+            try {
+
+                const predictions =
+                    await model.classify([message]);
+
+
+                const scores = {};
+
+
+                predictions.forEach(prediction => {
+
+                    scores[prediction.label] =
+                        prediction.results[0]
+                            .probabilities[1];
+
+                });
+
+
+                displayResults(scores);
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "An error occurred while analyzing the message."
+                );
+
+            }
+
+
+            analyzeBtn.disabled = false;
+
+            analyzeBtn.textContent =
+                "Analyze Message";
+
+        }
+
+
+
+        /* =====================================
+           DISPLAY RESULTS
+        ====================================== */
+
+        function displayResults(scores) {
+
+            const results =
+                document.getElementById("results");
+
+            results.classList.remove("hidden");
+
+
+            const toxicity =
+                scores["toxicity"] || 0;
+
+            const toxicityPercent =
+                toxicity * 100;
+
+
+            /* Overall score */
+
+            document.getElementById(
+                "toxicityScore"
+            ).textContent =
+                toxicityPercent.toFixed(1) + "%";
+
+
+            document.getElementById(
+                "toxicityBar"
+            ).style.width =
+                toxicityPercent + "%";
+
+
+            /* Status */
+
+            const statusBadge =
+                document.getElementById(
+                    "statusBadge"
+                );
+
+
+            if (toxicity >= threshold) {
+
+                statusBadge.textContent =
+                    "Review recommended";
+
+                statusBadge.className =
+                    "status-badge review";
+
+            }
+
+            else {
+
+                statusBadge.textContent =
+                    "No high-risk toxicity detected";
+
+                statusBadge.className =
+                    "status-badge safe";
+
+            }
+
+
+
+            /* Categories */
+
+            const labels = [
+
+                ["toxicity", "Toxicity"],
+
+                ["insult", "Insult"],
+
+                ["obscene", "Obscene"],
+
+                ["threat", "Threat"],
+
+                ["identity_attack", "Identity Attack"],
+
+                ["severe_toxicity", "Severe Toxicity"],
+
+                ["sexual_explicit", "Sexual Explicit"]
+
+            ];
+
+
+            const categories =
+                document.getElementById(
+                    "categories"
+                );
+
+
+            categories.innerHTML = "";
+
+
+            labels.forEach(
+                ([key, name]) => {
+
+                    const value =
+                        scores[key] || 0;
+
+                    const percent =
+                        value * 100;
+
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+                    row.className =
+                        "category-row";
+
+
+                    row.innerHTML = `
+
+                        <div class="category-name">
+                            ${name}
+                        </div>
+
+                        <div class="category-progress">
+                            <div
+                                style="width:${percent}%"
+                            ></div>
+                        </div>
+
+                        <div class="category-value">
+                            ${percent.toFixed(1)}%
+                        </div>
+
+                    `;
+
+
+                    categories.appendChild(row);
+
+                }
+            );
+
+
+            /* Scroll to results */
+
+            setTimeout(() => {
+
+                results.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }, 100);
+
+        }
+
+
+
+        /* =====================================
+           EXAMPLES
+        ====================================== */
+
+        function useExample(type) {
+
+            if (type === "positive") {
+
+                messageInput.value =
+                    "Thank you for your assistance. I really appreciate your time and effort in helping us with our concern";
+
+            }
+
+
+            if (type === "neutral") {
+
+                messageInput.value =
+                    "Good afternoon. I would like to ask about the deadline and submission procedure for our project. Could you please provide the schedule and instructions? Thank you.";
+
+            }
+
+
+            if (type === "toxic") {
+
+                messageInput.value =
+                    "I hope you die. You are a stupid idiot and nobody likes you.";
+
+            }
+
+
+            updateCharacterCount();
+
+        }
+
+
+
+        /* =====================================
+           CLEAR MESSAGE
+        ====================================== */
+
+        function clearMessage() {
+
+            messageInput.value = "";
+
+            updateCharacterCount();
+
+            document
+                .getElementById("results")
+                .classList.add("hidden");
+
+        }
+
+
+
+        /* =====================================
+           START APPLICATION
+        ====================================== */
+
+        loadModel();
+
+    </script>
+
+</body>
+
+</html>
